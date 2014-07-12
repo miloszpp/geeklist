@@ -1,0 +1,19 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhoneRetina.7.1" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GeekList/MasterViewController.cs">
+    <Files>
+      <File FileName="GeekList/AppDelegate.cs" Line="12" Column="8" />
+      <File FileName="GeekList/MasterViewController.cs" Line="23" Column="4" />
+      <File FileName="GeekList/Parser/OutputFormatter.cs" Line="1" Column="1" />
+      <File FileName="GeekList/Parser/Commands.cs" Line="1" Column="1" />
+      <File FileName="GeekList/Parser/CommandParser.cs" Line="1" Column="1" />
+      <File FileName="GeekList/TaskDataSource.cs" Line="49" Column="22" />
+      <File FileName="GeekList/UIViewExtensions.cs" Line="1" Column="1" />
+      <File FileName="GeekList/TaskDetailsViewController.cs" Line="13" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
