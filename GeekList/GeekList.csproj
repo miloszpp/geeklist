@@ -98,9 +98,7 @@
     <Reference Include="monotouch" />
     <Reference Include="System.Data" />
     <Reference Include="Mono.Data.Sqlite" />
-    <Reference Include="SQLite">
-      <HintPath>..\Components\sqlite-net-1.0.8\lib\ios\SQLite.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Json" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -142,12 +140,6 @@
     <Folder Include="Parser\" />
     <Folder Include="WebContent\" />
     <Folder Include="WebContent\img\" />
-  </ItemGroup>
-  <ItemGroup>
-    <XamarinComponentReference Include="sqlite-net">
-      <Version>1.0.8</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
