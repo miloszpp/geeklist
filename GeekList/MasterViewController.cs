@@ -83,10 +83,10 @@ namespace GeekList
 				CommandTextField.ResignFirstResponder();
 				return true;
 			}
-			var commands = commandParser.Parse (CommandTextField.Text);
-			if (commands.Count == 1) {
-				if (commands.First () is AddCommand) {
-					var addCommand = commands.First () as AddCommand;
+			var command = commandParser.Parse (CommandTextField.Text);
+			if (command != null) {
+				if (command is AddCommand) {
+					var addCommand = command as AddCommand;
 					var task = new Task { 
 						Description = addCommand.Description,
 						Priority = addCommand.Priority,
@@ -96,19 +96,35 @@ namespace GeekList
 					};
 					TaskList.TaskCollection.Add (task);
 				}
-				if (commands.First () is RemoveCommand) {
-					var removeCommand = commands.First () as RemoveCommand;
-					var task = dataSource.GetTaskAtSectionAndRow (removeCommand.SectionId, removeCommand.RowId);
-					if (task == null)
+				if (command is TaskParameterisedCommand) {
+					var parameterisedCommand = command as TaskParameterisedCommand;
+					IList<Task> tasks = new List<Task> ();
+
+					if (parameterisedCommand.RowId == null) {
+						var sectionTasks = dataSource.GetTasksFromSection(parameterisedCommand.SectionId);
+						if (sectionTasks != null)
+							tasks = sectionTasks.ToList();
+					} else {
+						var task = dataSource.GetTaskAtSectionAndRow (parameterisedCommand.SectionId, parameterisedCommand.RowId.Value);
+						if (task != null)
+							tasks.Add (task);
+					}
+					if (tasks.Count == 0)
 						return false;
-					TaskList.TaskCollection.Remove (task);
-				}
-				if (commands.First () is CompleteCommand) {
-					var completeCommand = commands.First () as CompleteCommand;
-					var task = dataSource.GetTaskAtSectionAndRow (completeCommand.SectionId, completeCommand.RowId);
-					if (task == null)
-						return false;
-					task.Completed = true;
+
+					foreach (var task in tasks) {
+						if (parameterisedCommand is RemoveCommand)
+							TaskList.TaskCollection.Remove (task);
+						else if (parameterisedCommand is CompleteCommand)
+							task.Completed = true;
+						else if (parameterisedCommand is PostponeCommand && task.Due.HasValue) {
+							if (task.Due < DateTime.Today) {
+								task.Due = DateTime.Today;
+							} else {
+								task.Due = task.Due.Value.AddDays (1);
+							}
+						}
+					}
 				}
 
 				TableView.ReloadData ();

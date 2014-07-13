@@ -18,6 +18,10 @@ namespace GeekList
 			return new DateTime? (date.ToDateTime ()).FormatDate ();
 		}
 
+		public static string FormatId(this int id) {
+			return ((char)(id + 97)).ToString();
+		}
+
 		public static string FormatPriority(this int? priority) {
 			if (priority == 1) 
 				return "Low";

@@ -7,12 +7,31 @@ namespace GeekList
 {
 	public class CommandParser
 	{
-		private const string AddCommandPattern = @"add ([^#\^]+)(((\^(?<DUE>\S+))|(#(?<PRIO>\d+)))\s*)*";
-		private const string RemoveCommandPattern = @"rm (\d+)\.(\d+)";
-		private const string DoCommandPattern = @"do (\d+)\.(\d+)";
+		private const string AddCommandPattern = @"([^#\^]+)(((\^(?<DUE>\S+))|(#(?<PRIO>\d+)))\s*)*";
+		private const string TaskParameterisedCommand = @"(?<VERB>rm|do|pp) (?<SECTION>[a-z])(\.(?<ROW>[a-z])){0,1}";
 
-		public IList<CommandBase> Parse(string commandText) {
-			var result = new List<CommandBase> ();
+		public CommandBase Parse(string commandText) {
+			var parameterisedCommandMatch = Regex.Match (commandText, TaskParameterisedCommand);
+			if (parameterisedCommandMatch.Success) {
+				var verb = parameterisedCommandMatch.Groups ["VERB"];
+				var section = char.Parse (parameterisedCommandMatch.Groups ["SECTION"].Value);
+				var rowGroup = parameterisedCommandMatch.Groups ["ROW"];
+
+				TaskParameterisedCommand command = null;
+				if (verb.Value == "do")
+					command = new CompleteCommand ();
+				else if (verb.Value == "rm")
+					command = new RemoveCommand ();
+				else if (verb.Value == "pp")
+					command = new PostponeCommand ();
+
+				command.SectionId = ((int)(section)) - 97;
+				if (rowGroup.Success) {
+					command.RowId = ((int)(char.Parse(rowGroup.Value))) - 97;
+				}
+
+				return command;
+			}
 
 			var addCommandMatch = Regex.Match (commandText, AddCommandPattern);
 			if (addCommandMatch.Success) {
@@ -28,31 +47,11 @@ namespace GeekList
 						Priority = priority,
 						Due = due
 					};
-					result.Add (command);
+					return command;
 				}
 			}
-			var removeCommandMatch = Regex.Match (commandText, RemoveCommandPattern);
-			if (removeCommandMatch.Success) {
-				var section = int.Parse (removeCommandMatch.Groups [1].Value);
-				var row = int.Parse (removeCommandMatch.Groups [2].Value);
-				var command = new RemoveCommand {
-					SectionId = section,
-					RowId = row
-				};
-				result.Add (command);
-			}
-			var doCommandMatch = Regex.Match (commandText, DoCommandPattern);
-			if (doCommandMatch.Success) {
-				var section = int.Parse (doCommandMatch.Groups [1].Value);
-				var row = int.Parse (doCommandMatch.Groups [2].Value);
-				var command = new CompleteCommand {
-					SectionId = section,
-					RowId = row
-				};
-				result.Add (command);
-			}
 
-			return result;
+			return null;
 		}
 
 		private DateTime? ParseDate(string dateString) {

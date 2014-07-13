@@ -20,20 +20,20 @@ namespace GeekList {
 		}
 	}
 
-	public class RemoveCommand : CommandBase {
+	public class TaskParameterisedCommand : CommandBase {
 		public int SectionId { get; set; }
-		public int RowId {
+		public int? RowId {
 			get;
 			set;
 		}
 	}
 
-	public class CompleteCommand : CommandBase {
-		public int SectionId { get; set; }
-		public int RowId {
-			get;
-			set;
-		}
+	public class RemoveCommand : TaskParameterisedCommand {
 	}
 
+	public class CompleteCommand : TaskParameterisedCommand {
+	}
+
+	public class PostponeCommand : TaskParameterisedCommand {
+	}
 }

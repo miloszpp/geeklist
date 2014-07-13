@@ -25,7 +25,7 @@ namespace GeekList
 				. Where(t => t.Due.HasValue && !t.Completed)
 				. OrderBy (t => t.Due)
 				. Union( objects.Where(t => !t.Due.HasValue && !t.Completed))
-				. GroupBy (t => t.Due);
+				. GroupBy (t => t.Due.HasValue ? new DateTime?(t.Due.Value.Date) : null);
 			prioritySections = objects
 				. Where(t => !t.Completed)
 				. OrderByDescending (t => t.Priority)
@@ -36,6 +36,22 @@ namespace GeekList
 		public SortMode Mode {
 			get;
 			set;
+		}
+
+		public IEnumerable<Task> GetTasksFromSection(int section) {
+			try {
+				switch (Mode) {
+				case SortMode.DueDate:
+					return dueSections.ElementAt (section);
+				case SortMode.Priority:
+					return prioritySections.ElementAt (section);
+				case SortMode.Completed:
+					return null;
+				}
+			} catch (ArgumentOutOfRangeException) {
+				return null;
+			}
+			return null;
 		}
 
 		public Task GetTaskAtSectionAndRow(int section, int row) {
@@ -110,7 +126,7 @@ namespace GeekList
 				break;
 			}
 
-			cell.TextLabel.Text = string.Format ("[{0}.{1}] {2}", indexPath.Section, indexPath.Row, task.Description);
+			cell.TextLabel.Text = string.Format ("[{0}.{1}] {2}", indexPath.Section.FormatId(), indexPath.Row.FormatId(), task.Description);
 
 			return cell;
 		}
@@ -120,7 +136,8 @@ namespace GeekList
 			switch (editingStyle) {
 			case UITableViewCellEditingStyle.Delete:
 				var oldNumOfSections = NumberOfSections (tableView);
-				objects.RemoveAt (indexPath.Row);
+				var task = GetTaskAtSectionAndRow (indexPath.Section, indexPath.Row);
+				objects.Remove (task);
 				tableView.BeginUpdates ();
 				if (oldNumOfSections != NumberOfSections (tableView)) {
 					var indexSet = new NSIndexSet ((uint)indexPath.Section);
