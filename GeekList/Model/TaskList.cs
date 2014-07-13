@@ -1,52 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using SQLite;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace GeekList
 {
 	public class TaskList : IDisposable
 	{
-		private IList<Task> tasks;
-
-		private readonly SQLiteConnection db;
-		private readonly object connectionLock;
+		private List<Task> tasks;
+		private XmlSerializer serializer;
 
 		private static readonly string dbPath = Path.Combine (
 			Environment.GetFolderPath (Environment.SpecialFolder.Personal),
-			"geekList.db3");
+			"geekList.xml");
 
-		public IList<Task> TaskCollection { get { return tasks; } }
+		public List<Task> TaskCollection { 
+			get { return tasks; } 
+			set { tasks = value; }
+		}
 
 		public TaskList () {
 			tasks = new List<Task> ();
-			connectionLock = new object ();
-			lock (connectionLock) {
-				db = new SQLiteConnection (dbPath);
-				db.CreateTable<Task> ();
-			}
+			serializer = new XmlSerializer (typeof(TaskList));
 		}
 
 		public void Persist() {
-			lock (connectionLock) {
-				db.DeleteAll<Task> ();
-				foreach (Task task in tasks) {
-					db.Insert (task);
-				}
+			using (var file = new StreamWriter(dbPath, false)) {
+				serializer.Serialize (file, this);
 			}
 		}
 
 		public void Load() {
-			lock (connectionLock) {
-				tasks = new List<Task> (db.Table<Task> ());
+			if (!File.Exists (dbPath))
+				return;
+			using (var file = new StreamReader(dbPath)) {
+				var deserialized = (TaskList) serializer.Deserialize (file);
+				this.tasks = deserialized.tasks;
 			}
 		}
 
 		#region IDisposable implementation
 
 		public void Dispose ()
-		{
-			db.Close ();
+		{/*
+			db.Close ();*/
 		}
 
 		#endregion
