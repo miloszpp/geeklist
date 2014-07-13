@@ -37,6 +37,7 @@ namespace GeekList
 			DescriptionTextField.ShouldReturn += HandleDescriptionShouldReturn;
 
 			var datePicker = new UIDatePicker ();
+			datePicker.SetDate (task.Due, false);
 			datePicker.Mode = UIDatePickerMode.Date;
 			datePicker.ValueChanged += (object sender, EventArgs e) => { 
 				DueDateTextField.Text = datePicker.Date.FormatDate(); 

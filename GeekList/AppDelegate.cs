@@ -26,7 +26,7 @@ namespace GeekList
 			var masterViewController = (MasterViewController)((UINavigationController)Window.RootViewController).ViewControllers.First ();
 			masterViewController.TaskList = taskList;
 		}
-		
+
 		//
 		// This method is invoked when the application is about to move from active to inactive state.
 		//
@@ -42,6 +42,8 @@ namespace GeekList
 		public override void DidEnterBackground (UIApplication application)
 		{
 			taskList.Persist ();
+			SetupNotifications (application);
+			UpdateBadge (application);
 		}
 		
 		// This method is called as part of the transiton from background to active state.
@@ -53,7 +55,33 @@ namespace GeekList
 		public override void WillTerminate (UIApplication application)
 		{
 			taskList.Persist ();
+			SetupNotifications (application);
+			UpdateBadge (application);
 			taskList.Dispose ();
+		}
+
+
+		void SetupNotifications (UIApplication application)
+		{
+			application.CancelAllLocalNotifications ();
+			foreach (var g in taskList.TaskCollection
+				.Where (t => t.Due.HasValue && !t.Completed && t.Due.Value.Date >= DateTime.Today)
+				.GroupBy(t => t.Due.Value.Date)) 
+			{
+				var notification = new UILocalNotification ();
+				notification.FireDate = new DateTime (g.Key.Year, g.Key.Month, g.Key.Day, 9, 0, 0);	
+				notification.AlertAction = "Task reminder";
+				notification.AlertBody = string.Format("You have {0} tasks scheduled for today", g.Count());
+				notification.SoundName = UILocalNotification.DefaultSoundName;
+				notification.ApplicationIconBadgeNumber = g.Count ();
+				application.ScheduleLocalNotification (notification);
+			}
+		}
+
+		void UpdateBadge(UIApplication application)
+		{
+			application.ApplicationIconBadgeNumber = taskList.TaskCollection
+				.Where (t => t.Due.HasValue && !t.Completed && t.Due.Value.Date == DateTime.Today).Count();
 		}
 	}
 }
