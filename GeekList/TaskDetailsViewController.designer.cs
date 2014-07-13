@@ -28,7 +28,7 @@ namespace GeekList
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel DueDateLabel { get; set; }
+		UITextField DueDateTextField { get; set; }
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
@@ -48,9 +48,9 @@ namespace GeekList
 				DescriptionTextField.Dispose ();
 				DescriptionTextField = null;
 			}
-			if (DueDateLabel != null) {
-				DueDateLabel.Dispose ();
-				DueDateLabel = null;
+			if (DueDateTextField != null) {
+				DueDateTextField.Dispose ();
+				DueDateTextField = null;
 			}
 			if (PriorityLabel != null) {
 				PriorityLabel.Dispose ();

@@ -26,7 +26,7 @@ namespace GeekList
 				DescriptionTextField.Text = task.Description;
 				CompletedSwitch.SetState(task.Completed, false);
 				if (task.Due.HasValue)
-					DueDateLabel.Text = task.Due.FormatDate ();
+					DueDateTextField.Text = task.Due.FormatDate ();
 				if (task.Priority.HasValue)
 					PriorityLabel.Text = task.Priority.FormatPriority ();
 			}
@@ -35,6 +35,16 @@ namespace GeekList
 
 			CompletedSwitch.ValueChanged += HandleCompletedSwitchValueChanged;
 			DescriptionTextField.ShouldReturn += HandleDescriptionShouldReturn;
+
+			var datePicker = new UIDatePicker ();
+			datePicker.Mode = UIDatePickerMode.Date;
+			datePicker.ValueChanged += (object sender, EventArgs e) => { 
+				DueDateTextField.Text = datePicker.Date.FormatDate(); 
+				task.Due = datePicker.Date.ToDateTime ();
+			};
+			DueDateTextField.InputView = datePicker;
+
+			View.SetupKeyboardDismissal ();
 		}
 
 

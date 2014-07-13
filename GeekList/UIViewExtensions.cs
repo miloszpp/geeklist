@@ -14,6 +14,14 @@ namespace GeekList
 			borderLayer.BackgroundColor = UIColor.Black.CGColor;
 			view.Layer.AddSublayer (borderLayer);
 		}
+
+		public static void SetupKeyboardDismissal(this UIView view) {
+			var gestureRecognizer = new UITapGestureRecognizer((UITapGestureRecognizer obj) => {
+				view.EndEditing(true);
+			});
+			gestureRecognizer.CancelsTouchesInView = false;
+			view.AddGestureRecognizer (gestureRecognizer);
+		}
 	}
 }
 

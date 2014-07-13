@@ -44,6 +44,8 @@ namespace GeekList
 			ControlView.SetBottomBorder (2.0f);
 
 			SortSwitch.ValueChanged += HandleSortSwitchValueChanged;
+
+			View.SetupKeyboardDismissal ();
 		}
 
 		public override void ViewWillAppear (bool animated)
