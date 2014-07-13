@@ -32,14 +32,7 @@ namespace GeekList
 			TableView.Source = dataSource;
 			CommandTextField.ShouldReturn += HandleCommandTextFieldShouldReturn;
 
-			var toolbar = new UIToolbar (new RectangleF (0.0f, 0.0f, View.Frame.Size.Width, 44.0f));
-			var hashButton = new UIBarButtonItem { Title = "Priority" };
-			hashButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "#"; };
-			var tickButton = new UIBarButtonItem { Title = "Due" };
-			tickButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^"; };
-			toolbar.Translucent = false;
-			toolbar.Items = new UIBarButtonItem[] { hashButton, tickButton };
-			CommandTextField.InputAccessoryView = toolbar;
+			SetupInputKeyboard ();
 
 			ControlView.SetBottomBorder (2.0f);
 
@@ -62,6 +55,24 @@ namespace GeekList
 				var item = dataSource.GetTaskAtSectionAndRow (TableView.IndexPathForSelectedRow.Section, TableView.IndexPathForSelectedRow.Row);
 				((TaskDetailsViewController)segue.DestinationViewController).SetTask (item);
 			}
+		}
+
+		void SetupInputKeyboard ()
+		{
+			var toolbar = new UIToolbar (new RectangleF (0.0f, 0.0f, View.Frame.Size.Width, 44.0f));
+			var hashButton = new UIBarButtonItem { Title = "Priority" };
+			hashButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "#"; };
+			var tickButton = new UIBarButtonItem { Title = "Due" };
+			tickButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^"; };
+			var dotButton = new UIBarButtonItem { Title = "." };
+			dotButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "."; };
+			var todayButton = new UIBarButtonItem { Title = "Today" };
+			todayButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^today"; };
+			var tomorrowButton = new UIBarButtonItem { Title = "Tomorrow" };
+			tomorrowButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^tomorrow"; };
+			toolbar.Translucent = false;
+			toolbar.Items = new UIBarButtonItem[] { dotButton, hashButton, tickButton, todayButton, tomorrowButton };
+			CommandTextField.InputAccessoryView = toolbar;
 		}
 
 		private void HandleSortSwitchValueChanged (object sender, EventArgs e)
