@@ -32,7 +32,7 @@ namespace GeekList
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel PriorityLabel { get; set; }
+		UITextField PriorityTextField { get; set; }
 
 		void ReleaseDesignerOutlets ()
 		{
@@ -52,9 +52,9 @@ namespace GeekList
 				DueDateTextField.Dispose ();
 				DueDateTextField = null;
 			}
-			if (PriorityLabel != null) {
-				PriorityLabel.Dispose ();
-				PriorityLabel = null;
+			if (PriorityTextField != null) {
+				PriorityTextField.Dispose ();
+				PriorityTextField = null;
 			}
 		}
 	}
