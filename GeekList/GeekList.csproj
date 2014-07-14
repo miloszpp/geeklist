@@ -99,6 +99,8 @@
     <Reference Include="System.Data" />
     <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="System.Json" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -130,6 +132,7 @@
     <Compile Include="HelpViewContainer.designer.cs">
       <DependentUpon>HelpViewContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sync\SyncManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -140,6 +143,7 @@
     <Folder Include="Parser\" />
     <Folder Include="WebContent\" />
     <Folder Include="WebContent\img\" />
+    <Folder Include="Sync\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

@@ -25,6 +25,9 @@ namespace GeekList
 			taskList.Load ();
 			var masterViewController = (MasterViewController)((UINavigationController)Window.RootViewController).ViewControllers.First ();
 			masterViewController.TaskList = taskList;
+
+//			var syncManager = new SyncManager ();
+//			var date = syncManager.GetServerSyncDate ();
 		}
 
 		//
