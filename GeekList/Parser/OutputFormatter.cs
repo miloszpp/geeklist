@@ -19,6 +19,8 @@ namespace GeekList
 		}
 
 		public static string FormatId(this int id) {
+			if (id + 97 > 122)
+				return "?";
 			return ((char)(id + 97)).ToString();
 		}
 

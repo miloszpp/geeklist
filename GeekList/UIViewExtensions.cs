@@ -2,6 +2,7 @@
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.CoreAnimation;
+using MonoTouch.CoreGraphics;
 
 namespace GeekList
 {
@@ -11,7 +12,7 @@ namespace GeekList
 		{
 			var borderLayer = new CALayer ();
 			borderLayer.Frame = new RectangleF (0.0f, view.Frame.Height - thickness, view.Frame.Width, thickness);
-			borderLayer.BackgroundColor = UIColor.Black.CGColor;
+			borderLayer.BackgroundColor = new CGColor(68.0f/255.0f, 76.0f/255.0f, 120.0f/255.0f, 0.0f);
 			view.Layer.AddSublayer (borderLayer);
 		}
 

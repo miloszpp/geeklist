@@ -13,6 +13,7 @@ namespace GeekList
 	{
 		private TaskDataSource dataSource;
 		private CommandParser commandParser;
+		private UIToolbar keyboardToolbar;
 
 		public TaskList TaskList {
 			get;
@@ -32,7 +33,9 @@ namespace GeekList
 			TableView.Source = dataSource;
 			CommandTextField.ShouldReturn += HandleCommandTextFieldShouldReturn;
 
-			SetupInputKeyboard ();
+			keyboardToolbar = new UIToolbar (new RectangleF (0.0f, 0.0f, View.Frame.Size.Width, 44.0f));
+			CommandTextField.InputAccessoryView = keyboardToolbar;
+			SetupKeyboardToolbarButtons ();
 
 			ControlView.SetBottomBorder (2.0f);
 
@@ -57,24 +60,6 @@ namespace GeekList
 			}
 		}
 
-		void SetupInputKeyboard ()
-		{
-			var toolbar = new UIToolbar (new RectangleF (0.0f, 0.0f, View.Frame.Size.Width, 44.0f));
-			var hashButton = new UIBarButtonItem { Title = "Priority" };
-			hashButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "#"; };
-			var tickButton = new UIBarButtonItem { Title = "Due" };
-			tickButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^"; };
-			var dotButton = new UIBarButtonItem { Title = "." };
-			dotButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "."; };
-			var todayButton = new UIBarButtonItem { Title = "Today" };
-			todayButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^today"; };
-			var tomorrowButton = new UIBarButtonItem { Title = "Tomorrow" };
-			tomorrowButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^tomorrow"; };
-			toolbar.Translucent = false;
-			toolbar.Items = new UIBarButtonItem[] { dotButton, hashButton, tickButton, todayButton, tomorrowButton };
-			CommandTextField.InputAccessoryView = toolbar;
-		}
-
 		private void HandleSortSwitchValueChanged (object sender, EventArgs e)
 		{
 			if (SortSwitch.SelectedSegment == 0) {
@@ -94,9 +79,11 @@ namespace GeekList
 				CommandTextField.ResignFirstResponder();
 				return true;
 			}
-			var command = commandParser.Parse (CommandTextField.Text);
+			var tuple = commandParser.Parse (CommandTextField.Text);
+			var command = tuple.Item1;
 			if (command != null) {
-				if (command is AddCommand) {
+				if (command is AddCommand) 
+				{
 					var addCommand = command as AddCommand;
 					var task = new Task { 
 						Description = addCommand.Description,
@@ -107,21 +94,24 @@ namespace GeekList
 					};
 					TaskList.TaskCollection.Add (task);
 				}
-				if (command is TaskParameterisedCommand) {
+				else if (command is TaskParameterisedCommand) 
+				{
 					var parameterisedCommand = command as TaskParameterisedCommand;
 					IList<Task> tasks = new List<Task> ();
 
 					if (parameterisedCommand.RowId == null) {
-						var sectionTasks = dataSource.GetTasksFromSection(parameterisedCommand.SectionId);
+						var sectionTasks = dataSource.GetTasksFromSection (parameterisedCommand.SectionId);
 						if (sectionTasks != null)
-							tasks = sectionTasks.ToList();
+							tasks = sectionTasks.ToList ();
 					} else {
 						var task = dataSource.GetTaskAtSectionAndRow (parameterisedCommand.SectionId, parameterisedCommand.RowId.Value);
 						if (task != null)
 							tasks.Add (task);
 					}
-					if (tasks.Count == 0)
+					if (tasks.Count == 0) {
+						SetKeyboardToolbarText ("No matching section/task found");
 						return false;
+					}
 
 					foreach (var task in tasks) {
 						if (parameterisedCommand is RemoveCommand)
@@ -139,11 +129,41 @@ namespace GeekList
 				}
 
 				TableView.ReloadData ();
-				CommandTextField.ResignFirstResponder();
+				CommandTextField.ResignFirstResponder ();
 				CommandTextField.Text = string.Empty;
 				return true; 
+			} else {
+				SetKeyboardToolbarText (tuple.Item2);
+				return false;
 			}
-			return false;
+		}
+
+		void SetupKeyboardToolbarButtons ()
+		{
+			var hashButton = new UIBarButtonItem { Title = "Priority" };
+			hashButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "#"; };
+			var tickButton = new UIBarButtonItem { Title = "Due" };
+			tickButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^"; };
+			var dotButton = new UIBarButtonItem { Title = "." };
+			dotButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "."; };
+			var todayButton = new UIBarButtonItem { Title = "Today" };
+			todayButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^today"; };
+			var tomorrowButton = new UIBarButtonItem { Title = "Tomorrow" };
+			tomorrowButton.Clicked += (object sender, EventArgs e) => { CommandTextField.Text += "^tomorrow"; };
+			keyboardToolbar.Translucent = false;
+			keyboardToolbar.Items = new UIBarButtonItem[] { dotButton, hashButton, tickButton, todayButton, tomorrowButton };
+		}
+
+		private void SetKeyboardToolbarText(string text) {
+			var label = new UILabel (keyboardToolbar.Frame);
+			label.Text = text;
+			keyboardToolbar.Items = new UIBarButtonItem[] { new UIBarButtonItem(label) };
+			EventHandler handler = null;
+			handler = (object sender, EventArgs e) => {
+				SetupKeyboardToolbarButtons();
+				CommandTextField.EditingChanged -= handler;
+			}; 
+			CommandTextField.EditingChanged += handler;
 		}
 	}
 }
