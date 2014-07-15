@@ -13,6 +13,7 @@ namespace GeekList
 	public partial class AppDelegate : UIApplicationDelegate
 	{
 		private TaskList taskList;
+		private ServerProxy serverProxy;
 		
 		public override UIWindow Window {
 			get;
@@ -25,9 +26,8 @@ namespace GeekList
 			taskList.Load ();
 			var masterViewController = (MasterViewController)((UINavigationController)Window.RootViewController).ViewControllers.First ();
 			masterViewController.TaskList = taskList;
-
-//			var syncManager = new SyncManager ();
-//			var date = syncManager.GetServerSyncDate ();
+			serverProxy = new ServerProxy ();
+			//Synchronize ().ContinueWith(t => 
 		}
 
 		//
@@ -62,7 +62,6 @@ namespace GeekList
 			UpdateBadge (application);
 			taskList.Dispose ();
 		}
-
 
 		void SetupNotifications (UIApplication application)
 		{

@@ -19,6 +19,7 @@ namespace GeekList
 			get { return tasks; } 
 			set { tasks = value; }
 		}
+		public DateTime? LastSyncDate { get; set; }
 
 		public TaskList () {
 			tasks = new List<Task> ();

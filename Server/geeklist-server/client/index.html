@@ -1,0 +1,14 @@
+<head></head>
+<body>
+  {{> loginButtons}}
+  {{> taskList}}
+</body>
+
+<template name="taskList">
+  <h1>Your tasks</h1>
+  <ul>
+    {{#each tasks}}
+    <li>{{description}}</li>
+    {{/each}}
+  </ul>
+</template>
