@@ -18,14 +18,24 @@ namespace GeekList
 		private IEnumerable<IGrouping<int?, Task>> prioritySections;
 		private IEnumerable<Task> completed;
 
+		private static DateTime Today = DateTime.Today.Date;
+
 		public TaskDataSource(IList<Task> tasks) {
 			objects = tasks;
 			Mode = SortMode.DueDate;
 			dueSections = objects
-				. Where(t => t.Due.HasValue && !t.Completed)
-				. OrderBy (t => t.Due)
-				. Union( objects.Where(t => !t.Due.HasValue && !t.Completed))
-				. GroupBy (t => t.Due.HasValue ? new DateTime?(t.Due.Value.Date) : null);
+				.Where (t => t.Due.HasValue && !t.Completed)
+				.OrderBy (t => t.Due)
+				.Union (objects.Where (t => !t.Due.HasValue && !t.Completed))
+				.GroupBy (t => {
+					if (!t.Due.HasValue)
+						return null;
+					if (DateTime.Compare(t.Due.Value.Date, Today) < 0)
+						return OutputFormatter.Overdue;
+					return new DateTime? (t.Due.Value.Date);
+					}
+			);
+					
 			prioritySections = objects
 				. Where(t => !t.Completed)
 				. OrderByDescending (t => t.Priority)
@@ -100,9 +110,9 @@ namespace GeekList
 		{
 			switch (Mode) {
 			case SortMode.DueDate:
-				return dueSections.ElementAt (section).First ().Due.FormatDate();
+				return dueSections.ElementAt (section).Key.FormatDate();
 			case SortMode.Priority:
-				return prioritySections.ElementAt (section).First ().Priority.FormatPriority ();
+				return prioritySections.ElementAt (section).Key.FormatPriority ();
 			case SortMode.Completed:
 				return null;
 			}
@@ -135,16 +145,9 @@ namespace GeekList
 		{
 			switch (editingStyle) {
 			case UITableViewCellEditingStyle.Delete:
-				var oldNumOfSections = NumberOfSections (tableView);
 				var task = GetTaskAtSectionAndRow (indexPath.Section, indexPath.Row);
 				objects.Remove (task);
-				tableView.BeginUpdates ();
-				if (oldNumOfSections != NumberOfSections (tableView)) {
-					var indexSet = new NSIndexSet ((uint)indexPath.Section);
-					tableView.DeleteSections (indexSet, UITableViewRowAnimation.Automatic);
-				}
-				tableView.DeleteRows (new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
-				tableView.EndUpdates ();
+				tableView.ReloadData ();
 				break;
 			case UITableViewCellEditingStyle.None:
 				break;

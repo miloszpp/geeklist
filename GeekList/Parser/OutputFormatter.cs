@@ -5,8 +5,12 @@ namespace GeekList
 {
 	public static class OutputFormatter
 	{
+		public static DateTime Overdue = new DateTime(999, 9, 9);
+
 		public static string FormatDate(this DateTime? date) {
 			if (!date.HasValue) return "Not set";
+			if (date == Overdue)
+				return "Overdue";
 			if (date.Value.Date.Equals(DateTime.Today.Date))
 				return "Today";
 			if (date.Value.Date.Equals(DateTime.Today.AddDays (1).Date))

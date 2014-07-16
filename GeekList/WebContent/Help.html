@@ -1,28 +1,91 @@
 ﻿
 <html>
 	<head>
-		<title></title>
+		<title>GeekList</title>
+    <style TYPE="text/css">
+      body {
+        font-family: sans-serif;
+      }
+      h1, h2 {
+        border: solid 1px white;
+        border-radius: 5px;
+        padding: 5px;
+        background: #99A9DC;
+        color: white;
+      }
+      a {
+        text-decoration: none;
+        color: gray;
+      }
+      span.command {
+        border: solid 1px black;
+        border-radius: 3px;
+        display: block;
+        padding: 5px;
+        margin: 3px;
+        font-family: monospace;
+      }
+	  img {
+		border: solid 1px black;
+        border-radius: 3px;
+        margin: 3px;
+      }
+    </style>
 	</head>
 	<body>
-	<h1>GeekList command examples</h1>
-	<h2>Adding tasks</h2>
-	<p><b>add</b> Visit grandpa <i>^today #3</i></p>
-	<p><b>add</b> Do the dishes <i>^tomorrow #1</i></p>
-	<p><b>add</b> Laundry <i>^Jul29</i></p>
-	</body>
-	<h2>Removing tasks</h2>
-	<p>
-		Refer to the task id provided within square brackets when using this command
-		<img src="img/tasks.png" width="200">
-	</p>
-	<p><b>rm</b> 0.0</p>
-	<p><b>rm</b> 1.0</p>
-	<h2>Task completion</h2>
-	<p><b>do</b> 0.0</p>
-	<p><b>do</b> 1.0</p>
+		<h1>GeekList</h1>
+		<p>
+			Task management app with a command line.<br />
+			<i>Created by Miłosz Piechocki using Xamarin Studio</i>
+		</p>
 
-	<h2>Attributions</h2>
+		<h2>Task creation</h2>
+    <p>
+        You can just type the task description straight away to the command box.
+        You can use <stong>^</strong> and <strong>#</strong> special characters
+        to quickly specify the due date or priority.
+    </p>
+
+		<span class="command">visit Agnes ^today #3</span>
+		<span class="command">do the dishes ^tomorrow #1</span>
+		<span class="command">do the laundry ^Jul29</span>
+
+		<h2>Task manipulation</h2>
+
+		    <img src="img/tasks.png" />
+
+    <p>
+        You can use the following commands for task manipulation:
+    </p>
+    <ul>
+      <li><strong>rm</strong> - remove the task</li>
+      <li><strong>pp</strong> - postpone the task</li>
+      <li><strong>do</strong> - complete the task</li>
+    </ul>
 	<p>
-	The app icon is comming from HeskinRadiophonic - http://heskinradiophonic.deviantart.com/. There have been no modifications to the icon.
-	</p>
+        All of these tasks take one argument - the task id. Task id is displayed
+        in the square brackets, next to the task description.
+    </p>
+
+    <span class="command">do a.b</span>
+    <span class="command">pp b.a</span>
+
+
+		<p>
+        It is possible to easily manipulate whole groups of tasks. Instead of
+        specifying the task id just provide the section id. If, for example,
+        you want to clear your day, it is as simple as:
+		</p>
+    <span class="command">pp a</span>
+    <p>
+      Command names are not case sensitive.
+    </p>
+
+		<h2>Attributions</h2>
+		<p>
+		The app icon is comming from <a href="http://heskinradiophonic.deviantart.com/">HeskinRadiophonic</a>.
+    There have been no modifications to the icon.
+		</p>
+
+	</body>
 </html>
